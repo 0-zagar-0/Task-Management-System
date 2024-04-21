@@ -8,7 +8,7 @@ import task.system.repository.user.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(final UserRepository userRepository) {

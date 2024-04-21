@@ -14,7 +14,7 @@ import task.system.service.user.UserService;
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
