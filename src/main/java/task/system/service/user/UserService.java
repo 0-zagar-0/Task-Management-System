@@ -2,16 +2,17 @@ package task.system.service.user;
 
 import task.system.dto.user.UserRegisterRequestDto;
 import task.system.dto.user.UserResponseDto;
+import task.system.dto.user.UserUpdateProfileRequest;
 import task.system.model.User;
 
 public interface UserService {
     UserResponseDto register(UserRegisterRequestDto requestDto);
 
-    Object getProfile();
+    UserResponseDto getProfile();
 
-    Object updateRole(Long id, Object role);
+    UserResponseDto updateRole(Long id, String role);
 
-    Object updateProfile(Object updateRequest);
+    UserResponseDto updateProfile(UserUpdateProfileRequest updateRequest);
 
     User getAuthenticatedUser();
 }

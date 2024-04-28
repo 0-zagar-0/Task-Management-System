@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d{HH:mm:ss.SSS} [%-4level] %c:%L - %msg%n}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=blue}"/>
+        </Console>
+        <File name="FileForRoot" fileName="logs/root.log">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} [%-4level] %c:%L - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+        <File name="FileForTaskSystem" fileName="logs/task_system.log">
+            <PatternLayout>
+                <Pattern>%d{HH:mm:ss.SSS} [%-4level] %c:%L - %msg%n</Pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileForRoot"/>
+        </Root>
+        <Logger name="task.system" level="INFO">
+            <AppenderRef ref="FileForTaskSystem"/>
+        </Logger>
+    </Loggers>
+</Configuration>

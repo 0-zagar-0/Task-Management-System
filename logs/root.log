@@ -1,0 +1,39 @@
+15:48:04.865 [INFO] org.springframework.test.context.support.AnnotationConfigContextLoaderUtils:83 - Could not detect default configuration classes for test class [task.system.TaskManagementSystemApplicationTests]: TaskManagementSystemApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+15:48:04.969 [INFO] org.springframework.boot.test.context.SpringBootTestContextBootstrapper:248 - Found @SpringBootConfiguration task.system.TaskManagementSystemApplication for test class task.system.TaskManagementSystemApplicationTests
+15:48:05.282 [INFO] org.hibernate.validator.internal.util.Version:21 - HV000001: Hibernate Validator 8.0.1.Final
+15:48:05.297 [INFO] task.system.TaskManagementSystemApplicationTests:51 - Starting TaskManagementSystemApplicationTests using Java 17.0.10 with PID 4140 (started by zagor in I:\Java\inteledj\Task-managment\task-management-system)
+15:48:05.300 [INFO] task.system.TaskManagementSystemApplicationTests:634 - No active profile set, falling back to 1 default profile: "default"
+15:48:06.096 [INFO] org.springframework.data.repository.config.RepositoryConfigurationDelegate:138 - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+15:48:06.117 [INFO] org.springframework.data.repository.config.RepositoryConfigurationDelegate:208 - Finished Spring Data repository scanning in 16 ms. Found 0 JDBC repository interfaces.
+15:48:06.616 [INFO] com.zaxxer.hikari.HikariDataSource:110 - HikariPool-1 - Starting...
+15:48:06.794 [INFO] com.zaxxer.hikari.pool.HikariPool:565 - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=TEST
+15:48:06.795 [INFO] com.zaxxer.hikari.HikariDataSource:123 - HikariPool-1 - Start completed.
+15:48:06.860 [INFO] liquibase.database:37 - Set default schema name to PUBLIC
+15:48:07.350 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.353 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.357 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.359 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.364 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.365 [INFO] liquibase.lockservice:37 - Successfully acquired change log lock
+15:48:07.374 [INFO] liquibase.changelog:37 - Creating database history table with name: PUBLIC.DATABASECHANGELOG
+15:48:07.377 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.378 [INFO] liquibase.changelog:37 - Reading from PUBLIC.DATABASECHANGELOG
+15:48:07.379 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.380 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.412 [INFO] liquibase.changelog:37 - Table users created
+15:48:07.413 [INFO] liquibase.changelog:37 - ChangeSet db/changelog/changes/01-create-users-table.yaml::create-users-table::zagar ran successfully in 8ms
+15:48:07.417 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.419 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.420 [INFO] liquibase:37 - Update command completed successfully.
+15:48:07.422 [INFO] liquibase.executor:37 - Changelog query completed.
+15:48:07.422 [INFO] liquibase.lockservice:37 - Successfully released change log lock
+15:48:07.489 [INFO] org.hibernate.Version:44 - HHH000412: Hibernate ORM core version 6.2.7.Final
+15:48:07.492 [INFO] org.hibernate.cfg.Environment:191 - HHH000406: Using bytecode reflection optimizer
+15:48:07.660 [WARN] org.hibernate.dialect.Dialect:351 - HHH000511: The 2.2.0 version for [org.hibernate.dialect.PostgreSQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 10.0.0. Check the community dialects project for available legacy versions.
+15:48:07.840 [INFO] org.hibernate.bytecode.internal.BytecodeProviderInitiator:53 - HHH000021: Bytecode provider name : bytebuddy
+15:48:08.477 [INFO] org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator:51 - HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+15:48:08.635 [WARN] org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration:231 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+15:48:08.729 [INFO] org.springframework.security.web.DefaultSecurityFilterChain:54 - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5c85ed05, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@23657729, org.springframework.security.web.context.SecurityContextHolderFilter@2f4bc3ff, org.springframework.security.web.header.HeaderWriterFilter@3a5244a1, org.springframework.security.web.authentication.logout.LogoutFilter@1d642682, task.system.security.JwtAuthenticationFilter@23f27434, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@154fcedd, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@34a06981, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@365291bd, org.springframework.security.web.session.SessionManagementFilter@5eaa6f76, org.springframework.security.web.access.ExceptionTranslationFilter@4cd13fad, org.springframework.security.web.access.intercept.AuthorizationFilter@fee1e32]
+15:48:09.293 [INFO] task.system.TaskManagementSystemApplicationTests:57 - Started TaskManagementSystemApplicationTests in 4.2 seconds (process running for 5.404)
+15:48:09.849 [INFO] com.zaxxer.hikari.HikariDataSource:350 - HikariPool-1 - Shutdown initiated...
+15:48:09.853 [INFO] com.zaxxer.hikari.HikariDataSource:352 - HikariPool-1 - Shutdown completed.
