@@ -16,9 +16,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username).orElseThrow(() -> new EntityNotFoundException(
-                "Can't find user by email: " + username
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        if (usernameOrEmail.contains("@")) {
+            return userRepository.findByEmail(usernameOrEmail).orElseThrow(
+                    () -> new EntityNotFoundException("Can't find user by email: " + usernameOrEmail
+            ));
+        }
+
+        return userRepository.findByUsername(usernameOrEmail).orElseThrow(
+                () -> new EntityNotFoundException("Can't find user by username: " + usernameOrEmail
         ));
     }
 }

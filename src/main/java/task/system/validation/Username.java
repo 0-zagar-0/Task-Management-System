@@ -7,13 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = PasswordValidation.class)
+@Constraint(validatedBy = UsernameValidation.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Password {
-    String message() default "Password must contain at least one digit, one lowercase letter, "
-            + "one uppercase letter, one special character, and have no spaces. "
-            + "It must be at least 8 characters long.";
+public @interface Username {
+    String message() default "You can use letters and numbers in any order";
 
     Class<?>[] groups() default {};
 

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import task.system.validation.FieldMatch;
 import task.system.validation.Password;
+import task.system.validation.Username;
 
 @Getter
 @Setter
@@ -26,6 +27,7 @@ public class UserRegisterRequestDto {
     private String repeatPassword;
     @NotBlank
     @Size(min = 3, max = 30)
+    @Username
     private String username;
     @NotBlank
     @Size(min = 3, max = 30)

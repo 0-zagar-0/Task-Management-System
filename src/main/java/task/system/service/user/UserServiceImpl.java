@@ -1,5 +1,6 @@
 package task.system.service.user;
 
+import jakarta.transaction.Transactional;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,9 @@ import task.system.exception.DataProcessingException;
 import task.system.exception.EntityNotFoundException;
 import task.system.exception.RegistrationException;
 import task.system.mapper.UserMapper;
+import task.system.model.Role;
 import task.system.model.User;
+import task.system.repository.role.RoleRepository;
 import task.system.repository.user.UserRepository;
 
 @Service
@@ -29,17 +32,21 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository,
-                           UserMapper userMapper,
-                           PasswordEncoder passwordEncoder
-    ) {
+    public UserServiceImpl(
+            UserRepository userRepository,
+            UserMapper userMapper,
+            PasswordEncoder passwordEncoder,
+            RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
+    @Transactional
     @Override
     public UserResponseDto register(final UserRegisterRequestDto requestDto) {
         if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
@@ -50,6 +57,10 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(requestDto);
+        Role role = roleRepository.findByName(Role.RoleName.ROLE_USER).orElseThrow(
+                () -> new DataProcessingException("Can't find role")
+        );
+        user.getRoles().add(role);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         User savedUser = userRepository.save(user);
         LOGGER.info("User with email: {} completed registration", user.getEmail());
@@ -67,10 +78,17 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find user by id: " + id)
         );
-        User.Role role = parseAndCheckValidRole(roleName);
-        user.setRole(role);
-        userRepository.updateUser(user);
-        LOGGER.info("User with email: {} updated role to: {}", user.getEmail(), role.name());
+        Role role = parseAndCheckValidRole(roleName);
+
+        if (user.getRoles().contains(role)) {
+            return userMapper.toDto(user);
+        }
+
+        user.getRoles().add(role);
+        userRepository.updateRoleById(id, role.getName());
+        LOGGER.info("User with email: {} updated role to: {}",
+                user.getEmail(), role.getName().name()
+        );
         return userMapper.toDto(user);
     }
 
@@ -108,28 +126,27 @@ public class UserServiceImpl implements UserService {
             throw new DataProcessingException("Unable to find authenticated user");
         }
 
-        return userRepository.findByEmail(authentication.getName()).orElseThrow(
+        return userRepository.findByUsername(authentication.getName()).orElseThrow(
                 () -> new EntityNotFoundException(
-                        "Can't find user by email: " + authentication.getName()
+                        "Can't find user by username: " + authentication.getName()
                 )
         );
     }
 
-    private User.Role parseAndCheckValidRole(String roleName) {
+    private Role parseAndCheckValidRole(String roleName) {
         StringBuilder roleMessage = new StringBuilder();
-        User.Role role = null;
+        Role role = null;
         String requestRole = roleName.toUpperCase().contains(ROLE_PREFIX)
                 ? roleName.trim().toUpperCase() : ROLE_PREFIX + roleName.trim().toUpperCase();
 
-        for (User.Role rol : User.Role.values()) {
-            roleMessage
-                    .append(", ")
+        for (Role.RoleName rol : Role.RoleName.values()) {
+            roleMessage.append(", ")
                     .append(rol.name().substring(5))
                     .append(" or ")
                     .append(rol.name());
 
             if (requestRole.equals(rol.name())) {
-                role = rol;
+                role = roleRepository.findByName(rol).get();
             }
         }
 

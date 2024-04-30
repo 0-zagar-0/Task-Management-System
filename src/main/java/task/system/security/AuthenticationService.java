@@ -12,7 +12,7 @@ import task.system.dto.user.UserLoginResponseDto;
 
 @Service
 public class AuthenticationService {
-    private static final Logger logger = LogManager.getLogger(AuthenticationService.class);
+    private static final Logger LOGGER = LogManager.getLogger(AuthenticationService.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -26,11 +26,20 @@ public class AuthenticationService {
     public UserLoginResponseDto authenticate(UserLoginRequestDto requestDto) {
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        requestDto.getEmail(),
+                        requestDto.getUsernameOrEmail(),
                         requestDto.getPassword())
         );
         String token = jwtUtil.generateToken(authenticate.getName());
-        logger.info("User with email: {} sign in completed", requestDto.getEmail());
+
+        if (requestDto.getUsernameOrEmail().contains("@")) {
+            LOGGER.info("User with email: {} sign in completed",
+                    requestDto.getUsernameOrEmail()
+            );
+        } else {
+            LOGGER.info("User with username: {} sign in completed",
+                    requestDto.getUsernameOrEmail());
+        }
+
         return new UserLoginResponseDto(token);
     }
 }
