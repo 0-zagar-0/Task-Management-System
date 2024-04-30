@@ -11,7 +11,7 @@ import task.system.model.User;
 public interface UserMapper {
     UserResponseDto toDto(User user);
 
-    @Mapping(target = "role", expression = "java(User.Role.ROLE_USER)")
+    @Mapping(target = "roles", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "authorities", ignore = true)
