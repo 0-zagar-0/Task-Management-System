@@ -1,5 +1,7 @@
 package task.system.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,6 +59,7 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .authenticated()
                 )
+                .oauth2Login(withDefaults())
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
