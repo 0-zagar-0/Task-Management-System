@@ -15,4 +15,6 @@ public interface UserService {
     UserResponseDto updateProfile(UserUpdateProfileRequest updateRequest);
 
     User getAuthenticatedUser();
+
+    User getById(Long id);
 }

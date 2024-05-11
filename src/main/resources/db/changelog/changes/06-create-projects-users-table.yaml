@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-projects-users-table
+      author: zagar
+      changes:
+        - createTable:
+            tableName: projects_users
+            columns:
+              - column:
+                  name: project_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_project_user_project
+                    references: projects(id)
+                    nullable: false
+                    deleteCascade: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_project_user_user
+                    references: users(id)
+                    nullable: false
+                    deleteCascade: false

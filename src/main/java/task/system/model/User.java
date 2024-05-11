@@ -17,8 +17,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,8 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @ToString
-@SQLDelete(sql = "UPDATE users SET is_deleted = TRUE WHERE id = ?")
-@Where(clause = "is_deleted = FALSE")
+@EqualsAndHashCode
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
