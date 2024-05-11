@@ -133,6 +133,13 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    @Override
+    public User getById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can't find user by id: " + id)
+        );
+    }
+
     private Role parseAndCheckValidRole(String roleName) {
         StringBuilder roleMessage = new StringBuilder();
         Role role = null;

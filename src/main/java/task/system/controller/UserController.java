@@ -1,4 +1,4 @@
-package task.system.controller.user;
+package task.system.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

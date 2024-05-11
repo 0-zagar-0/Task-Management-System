@@ -1,4 +1,4 @@
-package task.system.controller.authentication;
+package task.system.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
