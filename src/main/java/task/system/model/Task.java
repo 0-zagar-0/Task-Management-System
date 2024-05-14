@@ -5,18 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import task.system.exception.DataProcessingException;
@@ -24,49 +17,63 @@ import task.system.exception.DataProcessingException;
 @Entity
 @Getter
 @Setter
-@Table(name = "projects")
-public class Project {
+@Table(name = "tasks")
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description", nullable = false)
     private String description;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "main_user_id")
-    private User mainUser;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "projects_administrators",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> administrators = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "projects_users",
-            joinColumns = @JoinColumn(name = "project_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> users = new HashSet<>();
-
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
-
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    @Column(name = "priority", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Priority priority;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "due_date", nullable = false)
+    private LocalDate dueDate;
+
+    @Column(name = "project_id", nullable = false)
+    private Long projectId;
+
+    @Column(name = "assignee_id")
+    private Long assigneeId;
+
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
+    public enum Priority {
+        LOW,
+        MEDIUM,
+        HIGH;
+
+        @JsonCreator
+        public static Priority forValue(String value) {
+            StringBuilder errorMessage = new StringBuilder();
+
+            for (Priority priority : values()) {
+                if (priority.name().equalsIgnoreCase(value)) {
+                    return priority;
+                }
+
+                errorMessage.append(", ").append(priority.name());
+            }
+
+            throw new DataProcessingException("Invalid priority value, please enter valid value:"
+                    + errorMessage.substring(1)
+            );
+        }
+    }
+
     public enum Status {
-        INITIATED,
+        NOT_STARTED,
         IN_PROGRESS,
         COMPLETED;
 
@@ -78,8 +85,10 @@ public class Project {
                 if (status.name().equalsIgnoreCase(value)) {
                     return status;
                 }
+
                 errorMessage.append(", ").append(status.name());
             }
+
             throw new DataProcessingException("Invalid status value, please enter valid value:"
                     + errorMessage.substring(1)
             );

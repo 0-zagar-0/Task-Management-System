@@ -18,9 +18,14 @@ public interface ProjectMapper {
     @Mapping(target = "deleted", ignore = true)
     @Mapping(target = "users", ignore = true)
     @Mapping(target = "mainUser", ignore = true)
+    @Mapping(target = "administrators", ignore = true)
     Project toEntity(ProjectRequestDto request);
 
     @Mapping(target = "userIds", source = "users", qualifiedByName = "setUserIds")
+    @Mapping(target = "administratorIds",
+            source = "administrators",
+            qualifiedByName = "setAdministratorIds")
+    @Mapping(target = "mainUser", source = "savedProject.mainUser.id")
     ProjectDetailsResponseDto toDto(Project savedProject);
 
     ProjectLowInfoResponse toLowInfoDto(Project project);
@@ -28,6 +33,13 @@ public interface ProjectMapper {
     @Named("setUserIds")
     default Set<Long> setUserIds(Set<User> users) {
         return users.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+    }
+
+    @Named("setAdministratorIds")
+    default Set<Long> setAdministratorIds(Set<User> administrators) {
+        return administrators.stream()
                 .map(User::getId)
                 .collect(Collectors.toSet());
     }

@@ -1,40 +1,41 @@
-package task.system.dto.project;
+package task.system.dto.task;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-import task.system.model.Project;
+import task.system.model.Task;
 
 @Getter
 @Setter
-public class ProjectRequestDto {
+public class TaskCreateRequestDto {
     @NotNull
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 30)
     private String name;
 
     @NotNull
-    @Size(min = 3)
+    @Size(min = 1)
     private String description;
 
-    private Set<Long> administrators;
+    @NotNull
+    private Task.Priority priority;
 
-    private Set<Long> users;
+    @NotNull
+    private Task.Status status;
 
     @NotNull
     @FutureOrPresent
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate startDate;
+    private LocalDate dueDate;
 
     @NotNull
-    @FutureOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate endDate;
+    @Positive
+    private Long projectId;
 
-    @NotNull
-    private Project.Status status;
+    @Positive
+    private Long assigneeId;
 }

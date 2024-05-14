@@ -1,0 +1,85 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-ten-users-to-users-table
+      author: zagar
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "admin@example.com" }
+              - column: { name: "password", value: "$2a$10$SWWfolPyk5HXZOhz1YAUP.dZM8cP5XgA2TtyG300zmXrG4kGpNwSe" }
+              - column: { name: "username", value: "admin" }
+              - column: { name: "first_name", value: "admin" }
+              - column: { name: "last_name", value: "admin" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user1@example.com" }
+              - column: { name: "password", value: "$2a$10$dMJKC2x.aGKJ8gvO8wr4JuIyoIqKOz9Ub5a78ocNPwL33LetZCznW" }
+              - column: { name: "username", value: "user1" }
+              - column: { name: "first_name", value: "user1" }
+              - column: { name: "last_name", value: "user1" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user2@example.com" }
+              - column: { name: "password", value: "$2a$10$FlAR8c65Gz93mfSPtaRlcOoJ9fEQGUBeemy6zAjFiCcXkLUEcQgca" }
+              - column: { name: "username", value: "user2" }
+              - column: { name: "first_name", value: "user2" }
+              - column: { name: "last_name", value: "user2" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user3@example.com" }
+              - column: { name: "password", value: "$2a$10$eXmopRWz7tU2devPEGRNq.lTZGx6sT2N5zNA/vq0AyxnPceBD6g0C" }
+              - column: { name: "username", value: "user3" }
+              - column: { name: "first_name", value: "user3" }
+              - column: { name: "last_name", value: "user3" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user4@example.com" }
+              - column: { name: "password", value: "$2a$10$7U3Q86Ve0/7E/EXuARXctOpag0tBhj5kOB/LoEghewtGLKjfexYh2" }
+              - column: { name: "username", value: "user4" }
+              - column: { name: "first_name", value: "user4" }
+              - column: { name: "last_name", value: "user4" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user5@example.com" }
+              - column: { name: "password", value: "$2a$10$O2jyzw30AGCNspzbEy.Cj..AjeKl/v/753pvHZxB3U.OM/OSru9cm" }
+              - column: { name: "username", value: "user5" }
+              - column: { name: "first_name", value: "user5" }
+              - column: { name: "last_name", value: "user5" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user6@example.com" }
+              - column: { name: "password", value: "$2a$10$WeM3AzN2Ry1w4Wk10t/XS.9d7pdc7SA/WUgq9.dszWPZOZEdIiGVe" }
+              - column: { name: "username", value: "user6" }
+              - column: { name: "first_name", value: "user6" }
+              - column: { name: "last_name", value: "user6" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user7@example.com" }
+              - column: { name: "password", value: "$2a$10$.ElCTB30QUJhiXHkm1ZMIOp0csy5Vr5q05sYGiTVt9YZvagnzco5W" }
+              - column: { name: "username", value: "user7" }
+              - column: { name: "first_name", value: "user7" }
+              - column: { name: "last_name", value: "user7" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user8@example.com" }
+              - column: { name: "password", value: "$2a$10$3BDJiy23fvDAtecaMw0eiu.x9n8skG.AI3WCtX757ZfJfX2.vpwBC" }
+              - column: { name: "username", value: "user8" }
+              - column: { name: "first_name", value: "user8" }
+              - column: { name: "last_name", value: "user8" }
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: "email", value: "user9@example.com" }
+              - column: { name: "password", value: "$2a$10$p/tqhH5j10L5t4Us7qPUYOrbOZcEsaVaGZpNhTSOAtp3L.wopyl3i" }
+              - column: { name: "username", value: "user9" }
+              - column: { name: "first_name", value: "user9" }
+              - column: { name: "last_name", value: "user9" }

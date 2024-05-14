@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
             session = sessionFactory.openSession();
             Query<User> query = session.createQuery(
                     "FROM User u "
-                            + "LEFT JOIN FETCH u.roles "
+                            + "JOIN FETCH u.roles "
                             + "WHERE u.id = :id "
                             + "AND u.isDeleted = FALSE", User.class
             );
@@ -82,7 +82,7 @@ public class UserRepositoryImpl implements UserRepository {
             session = sessionFactory.openSession();
             Query<User> query = session.createQuery(
                     "FROM User u "
-                            + "LEFT JOIN FETCH u.roles "
+                            + "JOIN FETCH u.roles "
                             + "WHERE u.email = :email "
                             + "AND u.isDeleted = FALSE ", User.class
             );
@@ -106,7 +106,7 @@ public class UserRepositoryImpl implements UserRepository {
             session = sessionFactory.openSession();
             Query<User> query = session.createQuery(
                     "FROM User u "
-                            + "LEFT JOIN FETCH u.roles "
+                            + "JOIN FETCH u.roles "
                             + "WHERE u.username = :name "
                             + "AND u.isDeleted = FALSE ", User.class
             );

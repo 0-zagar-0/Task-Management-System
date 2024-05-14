@@ -19,6 +19,9 @@ import task.system.service.user.UserService;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
+    private static final String ACCESS_USER = "user";
+    private static final String ACCESS_ADMINISTRATOR = "administrator";
+
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final ProjectRepository projectRepository;
@@ -36,13 +39,21 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDetailsResponseDto create(ProjectRequestDto request) {
         Project project = projectMapper.toEntity(request);
-        Set<User> users = request.getUsers().stream()
-                .map(userService::getById)
-                .collect(Collectors.toSet());
+        Set<User> administratorsFromRequest =
+                getUsersFromDbFromRequest(request.getAdministrators());
+
         User user = userService.getAuthenticatedUser();
         project.setMainUser(user);
-        users.add(user);
-        project.getUsers().addAll(users);
+
+        Set<User> administrators = project.getAdministrators();
+        administrators.add(user);
+        administrators.addAll(administratorsFromRequest);
+
+        Set<User> usersFromRequest = getUsersFromDbFromRequest(request.getUsers());
+        Set<User> users = project.getUsers();
+        users.addAll(administrators);
+        users.addAll(usersFromRequest);
+
         Project savedProject = projectRepository.save(project);
         return projectMapper.toDto(savedProject);
     }
@@ -58,15 +69,17 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ProjectDetailsResponseDto getById(Long id) {
         Project projectById = findProjectById(id);
-        checkingUserAccess(id, projectById);
+        checkingUserAccess(ACCESS_USER, id, projectById.getUsers());
         return projectMapper.toDto(projectById);
     }
 
     @Override
     public ProjectDetailsResponseDto updateById(Long id, ProjectUpdateRequestDto request) {
         Project project = findProjectById(id);
-        checkingUserAccess(id, project);
-        checkingMainUserAccess(project.getMainUser().getId());
+
+        checkingUserAccess(ACCESS_USER, id, project.getUsers());
+        checkingUserAccess(ACCESS_ADMINISTRATOR, id, project.getAdministrators());
+
         Optional.ofNullable(request.getName())
                 .filter(name -> !name.equals(project.getName()))
                 .ifPresent(project::setName);
@@ -82,13 +95,14 @@ public class ProjectServiceImpl implements ProjectService {
         Optional.ofNullable(request.getStatus())
                 .filter(status -> !status.equals(project.getStatus()))
                 .ifPresent(project::setStatus);
-        Optional.ofNullable(request.getUsers())
-                .ifPresent(users -> {
-                    project.getUsers().addAll(
-                            users.stream()
-                                    .map(userService::getById)
-                                    .collect(Collectors.toSet()));
+        Optional.ofNullable(request.getAdministrators())
+                .ifPresent(admins -> {
+                    Set<User> usersFromDbFromRequest = getUsersFromDbFromRequest(admins);
+                    project.getAdministrators().addAll(usersFromDbFromRequest);
+                    project.getUsers().addAll(usersFromDbFromRequest);
                 });
+        Optional.ofNullable(request.getUsers())
+                .ifPresent(users -> project.getUsers().addAll(getUsersFromDbFromRequest(users)));
 
         return projectMapper.toDto(projectRepository.update(project));
     }
@@ -96,24 +110,38 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void deleteById(Long id) {
         Project project = findProjectById(id);
-        checkingUserAccess(id, project);
-        checkingMainUserAccess(project.getMainUser().getId());
+
+        if (!project.getMainUser().getId().equals(userService.getAuthenticatedUser().getId())) {
+            throw new DataProcessingException(
+                    "You cannot delete this project, only the main user can do that"
+            );
+        }
+
+        checkingUserAccess(ACCESS_USER, id, project.getUsers());
+        checkingUserAccess(ACCESS_ADMINISTRATOR, id, project.getAdministrators());
         projectRepository.deleteById(id);
     }
 
-    private void checkingUserAccess(Long id, Project project) {
-        User user = userService.getAuthenticatedUser();
-
-        if (project.getUsers().stream().noneMatch(us -> us.equals(user))) {
-            throw new DataProcessingException("You can only get your projects! "
-                    + "The project under this id: " + id + " is not yours.");
-        }
+    private Set<User> getUsersFromDbFromRequest(Set<Long> userIds) {
+        return userIds.stream()
+                .map(userService::getById)
+                .collect(Collectors.toSet());
     }
 
-    private void checkingMainUserAccess(Long projectUserId) {
-        if (!userService.getAuthenticatedUser().getId().equals(projectUserId)) {
-            throw new DataProcessingException("You are not the main user of this project,"
-                    + " you have no rights to update the project");
+    private void checkingUserAccess(String mainUserOrUser, Long id, Set<User> users) {
+        User user = userService.getAuthenticatedUser();
+        String message = null;
+
+        if (users.stream().noneMatch(us -> us.equals(user))) {
+            if (mainUserOrUser.equals(ACCESS_ADMINISTRATOR)) {
+                message = "You are not the administrator of this project,"
+                        + " you have no rights to update the project";
+            } else {
+                message = "You can only get your projects! " + "The project under this id: "
+                        + id + " is not yours.";
+            }
+
+            throw new DataProcessingException(message);
         }
     }
 
