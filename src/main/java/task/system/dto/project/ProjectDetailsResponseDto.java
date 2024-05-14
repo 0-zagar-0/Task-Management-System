@@ -12,6 +12,8 @@ public class ProjectDetailsResponseDto {
     private Long id;
     private String name;
     private String description;
+    private Long mainUser;
+    private Set<Long> administratorIds;
     private Set<Long> userIds;
     private LocalDate startDate;
     private LocalDate endDate;

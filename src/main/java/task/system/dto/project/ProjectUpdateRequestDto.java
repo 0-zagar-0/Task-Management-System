@@ -19,6 +19,8 @@ public class ProjectUpdateRequestDto {
     @Size(min = 3)
     private String description;
 
+    private Set<Long> administrators = new HashSet<>();
+
     private Set<Long> users = new HashSet<>();
 
     @FutureOrPresent
