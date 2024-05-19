@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-6-default-labels
+      author: zagar
+      changes:
+        - insert:
+            tableName: labels
+            columns:
+              - column: { name: "color", value: "GREY"}
+        - insert:
+            tableName: labels
+            columns:
+              - column: { name: "color", value: "RED" }
+        - insert:
+            tableName: labels
+            columns:
+              - column: { name: "color", value: "BLUE" }
+        - insert:
+            tableName: labels
+            columns:
+              - column: { name: "color", value: "GREEN" }
+        - insert:
+            tableName: labels
+            columns:
+              - column: { name: "color", value: "BROWN" }
+        - insert:
+            tableName: labels
+            columns:
+              - column: { name: "color", value: "PURPLE" }
