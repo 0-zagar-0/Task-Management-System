@@ -21,6 +21,7 @@ import task.system.model.Role;
 import task.system.model.User;
 import task.system.repository.role.RoleRepository;
 import task.system.repository.user.UserRepository;
+import task.system.telegram.TaskSystemBot;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -33,17 +34,19 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final TaskSystemBot taskSystemBot;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
             PasswordEncoder passwordEncoder,
-            RoleRepository roleRepository) {
+            RoleRepository roleRepository, TaskSystemBot taskSystemBot) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
+        this.taskSystemBot = taskSystemBot;
     }
 
     @Transactional
@@ -63,7 +66,9 @@ public class UserServiceImpl implements UserService {
         user.getRoles().add(role);
         user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         User savedUser = userRepository.save(user);
-        LOGGER.info("User with email: {} completed registration", user.getEmail());
+        String message = "User with email: " + user.getEmail() + " completed registration";
+        LOGGER.info(message);
+        taskSystemBot.sendMessage(message);
         return userMapper.toDto(savedUser);
     }
 

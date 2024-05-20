@@ -26,6 +26,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <jjwt.version>0.11.5</jjwt.version>
         <springdoc.openapi.common.version>1.6.15</springdoc.openapi.common.version>
+        <telegrambots.version>6.8.0</telegrambots.version>
     </properties>
 
     <dependencies>
@@ -147,6 +148,11 @@
             <groupId>com.dropbox.core</groupId>
             <artifactId>dropbox-core-sdk</artifactId>
             <version>7.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-spring-boot-starter</artifactId>
+            <version>${telegrambots.version}</version>
         </dependency>
     </dependencies>
 

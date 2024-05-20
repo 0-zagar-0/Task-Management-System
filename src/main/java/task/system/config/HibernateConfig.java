@@ -19,7 +19,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan("task/system/model");
+        sessionFactory.setPackagesToScan("task/system/model", "task/system/telegram/model");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }

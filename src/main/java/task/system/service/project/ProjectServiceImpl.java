@@ -16,6 +16,7 @@ import task.system.model.Project;
 import task.system.model.User;
 import task.system.repository.project.ProjectRepository;
 import task.system.service.user.UserService;
+import task.system.telegram.TaskSystemBot;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -25,15 +26,16 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
     private final UserService userService;
     private final ProjectRepository projectRepository;
+    private final TaskSystemBot taskSystemBot;
 
     public ProjectServiceImpl(
             ProjectMapper projectMapper,
             UserService userService,
-            ProjectRepository projectRepository
-    ) {
+            ProjectRepository projectRepository, TaskSystemBot taskSystemBot) {
         this.projectMapper = projectMapper;
         this.userService = userService;
         this.projectRepository = projectRepository;
+        this.taskSystemBot = taskSystemBot;
     }
 
     @Override
@@ -55,6 +57,10 @@ public class ProjectServiceImpl implements ProjectService {
         users.addAll(usersFromRequest);
 
         Project savedProject = projectRepository.save(project);
+        String messageToTelegram =
+                "User with email: " + user.getEmail() + System.lineSeparator()
+                        + " Create project: " + project.getName();
+        taskSystemBot.sendMessage(messageToTelegram);
         return projectMapper.toDto(savedProject);
     }
 
@@ -120,6 +126,9 @@ public class ProjectServiceImpl implements ProjectService {
         checkingUserAccess(ACCESS_USER, id, project.getUsers());
         checkingUserAccess(ACCESS_ADMINISTRATOR, id, project.getAdministrators());
         projectRepository.deleteById(id);
+        String telegramMessage = "User with email: " + project.getMainUser().getEmail()
+                + System.lineSeparator() + "Deleted project by name: " + project.getName();
+        taskSystemBot.sendMessage(telegramMessage);
     }
 
     private Set<User> getUsersFromDbFromRequest(Set<Long> userIds) {
@@ -130,7 +139,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private void checkingUserAccess(String mainUserOrUser, Long id, Set<User> users) {
         User user = userService.getAuthenticatedUser();
-        String message = null;
+        String message;
 
         if (users.stream().noneMatch(us -> us.equals(user))) {
             if (mainUserOrUser.equals(ACCESS_ADMINISTRATOR)) {
