@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-telegram_bot_chats_table
+      author: zagar
+      changes:
+        - createTable:
+            tableName: task_system_bot_chats
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: chat_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: is_deleted
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+                    

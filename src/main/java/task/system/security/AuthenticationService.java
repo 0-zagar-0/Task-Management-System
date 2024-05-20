@@ -31,14 +31,15 @@ public class AuthenticationService {
         );
         String token = jwtUtil.generateToken(authenticate.getName());
 
+        String message;
         if (requestDto.getUsernameOrEmail().contains("@")) {
-            LOGGER.info("User with email: {} sign in completed",
-                    requestDto.getUsernameOrEmail()
-            );
+            message = "User with email: " + requestDto.getUsernameOrEmail()
+                    + " sign in completed";
         } else {
-            LOGGER.info("User with username: {} sign in completed",
-                    requestDto.getUsernameOrEmail());
+            message = "User with username: " + requestDto.getUsernameOrEmail()
+                    + " sign in completed";
         }
+        LOGGER.info(message);
 
         return new UserLoginResponseDto(token);
     }
