@@ -1,5 +1,7 @@
 package task.system.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +20,9 @@ import task.system.dto.user.UserResponseDto;
 import task.system.security.AuthenticationService;
 import task.system.service.user.UserService;
 
+@Tag(name = "Authentication management",
+        description = "Endpoints for authorization and authentication users"
+)
 @Transactional
 @RestController
 @RequestMapping(value = "/auth")
@@ -36,6 +41,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/register")
+    @Operation(summary = "Register", description = "Register user")
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponseDto register(@RequestBody @Valid UserRegisterRequestDto request) {
         LOGGER.info("User with email: {} tried to register.", request.getEmail());
@@ -43,6 +49,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/login")
+    @Operation(summary = "Login", description = "Login user")
     @ResponseStatus(HttpStatus.OK)
     public UserLoginResponseDto login(@RequestBody @Valid UserLoginRequestDto requestDto) {
         if (requestDto.getUsernameOrEmail().contains("@")) {
