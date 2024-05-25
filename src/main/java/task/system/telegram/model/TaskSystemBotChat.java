@@ -19,6 +19,8 @@ public class TaskSystemBotChat {
     private Long id;
     @Column(name = "chat_id", nullable = false, unique = true)
     private Long chatId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 }

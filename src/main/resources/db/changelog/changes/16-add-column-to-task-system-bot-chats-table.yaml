@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-column-to-task-system-bot-chats-table
+      author: zagar
+      changes:
+        - addColumn:
+            tableName: task_system_bot_chats
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false

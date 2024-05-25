@@ -21,7 +21,6 @@ import task.system.model.Role;
 import task.system.model.User;
 import task.system.repository.role.RoleRepository;
 import task.system.repository.user.UserRepository;
-import task.system.telegram.TaskSystemBot;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,19 +33,18 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final TaskSystemBot taskSystemBot;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
             PasswordEncoder passwordEncoder,
-            RoleRepository roleRepository, TaskSystemBot taskSystemBot) {
+            RoleRepository roleRepository
+    ) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
-        this.taskSystemBot = taskSystemBot;
     }
 
     @Transactional
@@ -68,7 +66,6 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
         String message = "User with email: " + user.getEmail() + " completed registration";
         LOGGER.info(message);
-        taskSystemBot.sendMessage(message);
         return userMapper.toDto(savedUser);
     }
 
@@ -143,6 +140,12 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find user by id: " + id)
         );
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        getById(id);
+        return true;
     }
 
     private Role parseAndCheckValidRole(String roleName) {

@@ -11,10 +11,12 @@ import task.system.exception.DataProcessingException;
 import task.system.exception.EntityNotFoundException;
 import task.system.mapper.CommentMapper;
 import task.system.model.Comment;
+import task.system.model.Task;
 import task.system.model.User;
 import task.system.repository.comment.CommentRepository;
 import task.system.service.task.TaskService;
 import task.system.service.user.UserService;
+import task.system.telegram.TaskSystemBot;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -22,25 +24,34 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final TaskService taskService;
     private final UserService userService;
+    private final TaskSystemBot taskSystemBot;
 
     public CommentServiceImpl(
             CommentRepository commentRepository,
             CommentMapper commentMapper,
             TaskService taskService,
-            UserService userService
+            UserService userService,
+            TaskSystemBot taskSystemBot
     ) {
         this.commentRepository = commentRepository;
         this.commentMapper = commentMapper;
         this.taskService = taskService;
         this.userService = userService;
+        this.taskSystemBot = taskSystemBot;
     }
 
     @Override
     public CommentResponseDto create(CommentRequestDto request) {
-        taskService.findById(request.getTaskId());
+        Task taskFromDb = taskService.findById(request.getTaskId());
         Comment comment = commentMapper.toEntity(request);
         comment.setUserId(userService.getAuthenticatedUser().getId());
-        return commentMapper.toDto(commentRepository.save(comment));
+        Comment savedComment = commentRepository.save(comment);
+        String telegramMessage =
+                "User with id: " + savedComment.getUserId() + ", left a message to task."
+                + System.lineSeparator() + "Task: " + taskFromDb.getName()
+                + System.lineSeparator() + "Message: " + comment.getText();
+        taskSystemBot.sendMessage(telegramMessage, taskFromDb.getAssigneeId());
+        return commentMapper.toDto(savedComment);
     }
 
     @Override
