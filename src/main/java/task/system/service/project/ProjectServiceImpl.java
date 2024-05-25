@@ -57,10 +57,9 @@ public class ProjectServiceImpl implements ProjectService {
         users.addAll(usersFromRequest);
 
         Project savedProject = projectRepository.save(project);
-        String messageToTelegram =
-                "User with email: " + user.getEmail() + System.lineSeparator()
-                        + " Create project: " + project.getName();
-        taskSystemBot.sendMessage(messageToTelegram);
+        String telegramMessage = "You have been added to the project participants."
+                + System.lineSeparator() + "Project: " + savedProject.getName();
+        taskSystemBot.sendMessage(telegramMessage, savedProject.getUsers());
         return projectMapper.toDto(savedProject);
     }
 
@@ -110,7 +109,15 @@ public class ProjectServiceImpl implements ProjectService {
         Optional.ofNullable(request.getUsers())
                 .ifPresent(users -> project.getUsers().addAll(getUsersFromDbFromRequest(users)));
 
-        return projectMapper.toDto(projectRepository.update(project));
+        Project projectFromDb = findProjectById(id);
+        Project updatedProject = projectRepository.update(project);
+
+        createAndSendMessageToTelegramNewUser(projectFromDb, updatedProject);
+        String updateMessage = "The details of the project have been updated"
+                + System.lineSeparator() + "Project: " + project.getName();
+        taskSystemBot.sendMessage(updateMessage, projectFromDb.getUsers());
+
+        return projectMapper.toDto(updatedProject);
     }
 
     @Override
@@ -125,10 +132,11 @@ public class ProjectServiceImpl implements ProjectService {
 
         checkingUserAccess(ACCESS_USER, id, project.getUsers());
         checkingUserAccess(ACCESS_ADMINISTRATOR, id, project.getAdministrators());
+
+        String deleteMessage = "The project has been deleted" + System.lineSeparator()
+                + "Project: " + project.getName();
+        taskSystemBot.sendMessage(deleteMessage, project.getUsers());
         projectRepository.deleteById(id);
-        String telegramMessage = "User with email: " + project.getMainUser().getEmail()
-                + System.lineSeparator() + "Deleted project by name: " + project.getName();
-        taskSystemBot.sendMessage(telegramMessage);
     }
 
     private Set<User> getUsersFromDbFromRequest(Set<Long> userIds) {
@@ -158,5 +166,24 @@ public class ProjectServiceImpl implements ProjectService {
         return projectRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find project by id: " + id)
         );
+    }
+
+    private void createAndSendMessageToTelegramNewUser(Project project, Project updatedProject) {
+        Set<User> usersProject = project.getUsers();
+        Set<User> usersUpdatedProjects = updatedProject.getUsers();
+        String telegramMessage = "You have been added to the project participants."
+                + System.lineSeparator() + "Project: " + updatedProject.getName();
+
+        if (usersProject.isEmpty() && !usersUpdatedProjects.isEmpty()) {
+            taskSystemBot.sendMessage(telegramMessage, usersUpdatedProjects);
+        }
+
+        if (!usersProject.isEmpty()) {
+            usersUpdatedProjects.removeAll(usersProject);
+
+            if (!usersUpdatedProjects.isEmpty()) {
+                taskSystemBot.sendMessage(telegramMessage, usersUpdatedProjects);
+            }
+        }
     }
 }

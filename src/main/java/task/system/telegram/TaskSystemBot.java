@@ -1,69 +1,47 @@
 package task.system.telegram;
 
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import task.system.exception.DataProcessingException;
+import task.system.model.User;
+import task.system.repository.user.UserRepository;
 import task.system.telegram.model.TaskSystemBotChat;
 import task.system.telegram.service.TaskSystemBotService;
 
 @Component
 public class TaskSystemBot extends TelegramLongPollingBot {
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
     private final TaskSystemBotService botService;
+    private final UserRepository userRepository;
 
     @Value("${telegram.bot.token}")
     private String botToken;
     @Value("${telegram.bot.name}")
     private String botName;
 
-    public TaskSystemBot(TaskSystemBotService botService) {
+    public TaskSystemBot(TaskSystemBotService botService, UserRepository userRepository) {
         this.botService = botService;
-    }
-
-    public void sendMessage(String message) {
-        for (TaskSystemBotChat botChat : botService.findAll()) {
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(botChat.getChatId());
-            sendMessage.setText(message);
-
-            try {
-                execute(sendMessage);
-            } catch (TelegramApiException e) {
-                throw new DataProcessingException("Can't send message to telegram bot!", e);
-            }
-        }
+        this.userRepository = userRepository;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            Message message = update.getMessage();
-            botService.saveChatId(message.getChatId());
-
-            for (TaskSystemBotChat botChat : botService.findAll()) {
-                if (botChat.getChatId().equals(message.getChatId())) {
-                    continue;
-                }
-
-                SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(botChat.getChatId());
-                sendMessage.setText(getSenderName(message.getFrom()) + System.lineSeparator()
-                        + message.getText()
-                );
-
-                try {
-                    execute(sendMessage);
-                } catch (TelegramApiException e) {
-                    throw new DataProcessingException(
-                            "Can't send message, Telegram exception: " + e.getMessage()
-                    );
-                }
+        SendMessage sendMessage = checkUpdateText(update);
+        try {
+            if (sendMessage != null) {
+                execute(sendMessage);
             }
+        } catch (TelegramApiException e) {
+            throw new DataProcessingException("Can't send message to telegram!", e);
         }
     }
 
@@ -77,26 +55,67 @@ public class TaskSystemBot extends TelegramLongPollingBot {
         return botToken;
     }
 
-    private String getSenderName(User user) {
-        if (user.getFirstName() != null && user.getLastName() != null) {
-            return user.getFirstName() + " " + user.getLastName() + System.lineSeparator()
-                    + addUnderline(user.getFirstName(), user.getLastName());
-        } else if (user.getFirstName() != null) {
-            return user.getFirstName() + System.lineSeparator()
-                    + addUnderline(user.getFirstName(), "");
-        }
+    public void sendMessage(String text, Long userId) {
+        if (text != null && !text.isEmpty()) {
+            TaskSystemBotChat botChat = botService.findByUserId(userId);
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(botChat.getChatId());
+            sendMessage.setText(text);
 
-        return "Anonymous";
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                throw new DataProcessingException("Can't send message", e);
+            }
+        }
     }
 
-    private String addUnderline(String firstName, String lastName) {
-        int countLength = firstName.length() + lastName.length() + 1;
-        StringBuilder result = new StringBuilder();
+    public void sendMessage(String text, Set<User> users) {
+        if (text != null && !text.isEmpty()) {
+            for (User user : users) {
+                if (botService.existsById(user.getId())) {
+                    SendMessage sendMessage = new SendMessage();
+                    sendMessage.setChatId(botService.findByUserId(user.getId()).getChatId());
+                    sendMessage.setText(text);
 
-        for (int i = 0; i < countLength; i++) {
-            result.append("_");
+                    try {
+                        execute(sendMessage);
+                    } catch (TelegramApiException e) {
+                        throw new DataProcessingException("Can't send message", e);
+                    }
+                }
+            }
         }
+    }
 
-        return result.toString();
+    private SendMessage checkUpdateText(Update update) {
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            Message message = update.getMessage();
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setChatId(message.getChatId());
+
+            if (Pattern.compile(EMAIL_REGEX).matcher(message.getText()).matches()) {
+                String email = message.getText();
+                Optional<User> userOptional = userRepository.findByEmail(email);
+
+                if (userOptional.isPresent()) {
+                    botService.saveChatId(message.getChatId(), userOptional.get().getId());
+                    sendMessage.setText(
+                            "Thank you! Now you will receive messages from your projects here =_)"
+                    );
+                } else {
+                    sendMessage.setText("There are no users with this email address, "
+                            + "please enter a valid email");
+                }
+            }
+
+            if (message.getText().equals("/start")) {
+                sendMessage.setText("Hello, " + message.getFrom().getFirstName()
+                        + " please enter the e-mail address registered in the service.");
+
+            }
+            return sendMessage;
+        }
+        return null;
     }
 }

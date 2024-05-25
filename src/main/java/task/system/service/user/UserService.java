@@ -17,4 +17,6 @@ public interface UserService {
     User getAuthenticatedUser();
 
     User getById(Long id);
+
+    boolean existsById(Long id);
 }

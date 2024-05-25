@@ -11,4 +11,5 @@ public interface TaskSystemBotRepository {
 
     List<TaskSystemBotChat> findAll();
 
+    Optional<TaskSystemBotChat> findByUserId(Long userId);
 }

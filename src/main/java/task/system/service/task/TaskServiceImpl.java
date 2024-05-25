@@ -19,6 +19,7 @@ import task.system.model.User;
 import task.system.repository.task.TaskRepository;
 import task.system.service.project.ProjectService;
 import task.system.service.user.UserService;
+import task.system.telegram.TaskSystemBot;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -26,25 +27,29 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper taskMapper;
     private final UserService userService;
     private final ProjectService projectService;
+    private final TaskSystemBot taskSystemBot;
 
     public TaskServiceImpl(
             TaskRepository taskRepository,
             TaskMapper taskMapper,
             UserService userService,
-            ProjectService projectService
+            ProjectService projectService,
+            TaskSystemBot taskSystemBot
     ) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.userService = userService;
         this.projectService = projectService;
+        this.taskSystemBot = taskSystemBot;
     }
 
     @Override
     public TaskFullDetailsDto create(TaskCreateRequestDto request) {
         checkAssigneeUserId(request.getProjectId(), request.getAssigneeId());
         checkDueDate(request.getDueDate(), request.getProjectId());
-        Task entity = taskMapper.toEntity(request);
-        return taskMapper.toFullDetailsDto(taskRepository.save(entity));
+        Task task = taskMapper.toEntity(request);
+        generateTaskAssignmentMessageAndSend(task);
+        return taskMapper.toFullDetailsDto(taskRepository.save(task));
     }
 
     @Override
@@ -63,7 +68,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskFullDetailsDto updateById(Long id, TaskUpdateRequestDto request) {
         Task taskFromDb = findById(id);
-        checkingUserAccess(taskFromDb.getProjectId());
+        checkingAdministratorAccess(taskFromDb.getProjectId());
         checkDueDate(request.getDueDate(), taskFromDb.getProjectId());
         Optional.ofNullable(request.getName())
                 .filter(name -> !name.equals(taskFromDb.getName()))
@@ -87,24 +92,55 @@ public class TaskServiceImpl implements TaskService {
                     taskFromDb.setAssigneeId(assignee);
                 });
         Task updatedTask = taskRepository.update(taskFromDb);
+
+        if (taskFromDb.getAssigneeId() == null && updatedTask.getAssigneeId() != null) {
+            generateTaskAssignmentMessageAndSend(updatedTask);
+        }
+
+        if (updatedTask.getAssigneeId() != null) {
+            ProjectDetailsResponseDto project = projectService.getById(updatedTask.getProjectId());
+            String telegramMessage =
+                    "The details of the task have been updated" + System.lineSeparator()
+                            + "Task: " + updatedTask.getName() + System.lineSeparator()
+                            + "Project: " + project.getName() + System.lineSeparator()
+                            + "Please check for updates!";
+            taskSystemBot.sendMessage(telegramMessage, updatedTask.getAssigneeId());
+        }
+
         return taskMapper.toFullDetailsDto(updatedTask);
     }
 
     @Override
     public void deleteById(Long id) {
         Task taskFromDb = findById(id);
-        checkingUserAccess(taskFromDb.getProjectId());
+        checkingAdministratorAccess(taskFromDb.getProjectId());
         taskRepository.deleteById(id);
     }
 
     @Override
     public Task findById(Long id) {
-        return taskRepository.findById(id).orElseThrow(
+        Task task = taskRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find task by id: " + id)
         );
+        projectService.getById(task.getProjectId());
+        return task;
     }
 
-    private void checkingUserAccess(Long projectId) {
+    private void generateTaskAssignmentMessageAndSend(Task task) {
+        if (task.getAssigneeId() != null) {
+            ProjectDetailsResponseDto project = projectService.getById(
+                    task.getProjectId()
+            );
+            String telegramMessage =
+                    "You are assigned a task " + System.lineSeparator()
+                            + "Task: " + task.getName() + System.lineSeparator()
+                            + "Description: " + task.getDescription() + System.lineSeparator()
+                            + "Project: " + project.getName();
+            taskSystemBot.sendMessage(telegramMessage, task.getAssigneeId());
+        }
+    }
+
+    private void checkingAdministratorAccess(Long projectId) {
         ProjectDetailsResponseDto projectDetails = projectService.getById(projectId);
         User user = userService.getAuthenticatedUser();
         Set<Long> administratorIds = projectDetails.getAdministratorIds();
@@ -119,6 +155,10 @@ public class TaskServiceImpl implements TaskService {
 
     private void checkAssigneeUserId(Long projectId, Long assigneeId) {
         ProjectDetailsResponseDto projectDetails = projectService.getById(projectId);
+
+        if (assigneeId != null && !userService.existsById(assigneeId)) {
+            throw new EntityNotFoundException("Can't find user by id: " + assigneeId);
+        }
 
         if (assigneeId != null
                 && projectDetails.getUserIds().stream().noneMatch(id -> id.equals(assigneeId))) {

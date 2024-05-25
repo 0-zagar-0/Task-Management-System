@@ -81,4 +81,23 @@ public class TaskSystemBotRepositoryImpl implements TaskSystemBotRepository {
             }
         }
     }
+
+    @Override
+    public Optional<TaskSystemBotChat> findByUserId(Long userId) {
+        Session session = null;
+
+        try {
+            session = sessionFactory.openSession();
+            Query<TaskSystemBotChat> findQuery = session.createQuery("FROM TaskSystemBotChat bc "
+                    + "WHERE bc.userId = :userId", TaskSystemBotChat.class);
+            findQuery.setParameter("userId", userId);
+            return findQuery.uniqueResultOptional();
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Can't find TaskSystemBotChat by user ID: " + userId);
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+    }
 }

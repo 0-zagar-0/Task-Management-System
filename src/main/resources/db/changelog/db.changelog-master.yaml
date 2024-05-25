@@ -29,3 +29,5 @@ databaseChangeLog:
       file: db/changelog/changes/14-insert-6-default-labels.yaml
   - include:
       file: db/changelog/changes/15-create-task_system_bot_chats_table.yaml
+  - include:
+      file: db/changelog/changes/16-add-column-to-task-system-bot-chats-table.yaml
