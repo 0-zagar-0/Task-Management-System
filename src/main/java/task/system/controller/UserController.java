@@ -1,5 +1,7 @@
 package task.system.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import task.system.dto.user.UserResponseDto;
 import task.system.dto.user.UserUpdateProfileRequest;
 import task.system.service.user.UserService;
 
+@Tag(name = "User management", description = "Endpoints for users action")
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
@@ -27,13 +30,14 @@ public class UserController {
     }
 
     @GetMapping(value = "/me")
+    @Operation(summary = "Get profile", description = "Get user profile")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public UserResponseDto getProfile() {
         return userService.getProfile();
     }
 
     @PutMapping(value = "/{id}/role")
+    @Operation(summary = "Update role", description = "Update user role, admins access only")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN')")
     public UserResponseDto updateRole(@PathVariable Long id, @RequestParam String role) {
@@ -41,8 +45,8 @@ public class UserController {
     }
 
     @PutMapping(value = "/me")
+    @Operation(summary = "Update profile", description = "Update user profile")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public UserResponseDto updateProfile(
             @RequestBody @Valid UserUpdateProfileRequest updateRequest
     ) {
