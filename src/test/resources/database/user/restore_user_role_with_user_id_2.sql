@@ -1,1 +1,1 @@
-UPDATE users_roles SET role_id = 1 WHERE user_id = 2;
+DELETE FROM users_roles WHERE user_id = 2 AND role_id = 2;

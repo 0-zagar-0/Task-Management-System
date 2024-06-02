@@ -174,6 +174,96 @@ class AuthenticationControllerTest {
         assertEquals(expected, exception.getMessage());
     }
 
+    @Test
+    @DisplayName("Register user with invalid email, should return 400 status")
+    void registerUser_WithInvalidEmail_ShouldReturnBadRequestStatus() throws Exception {
+        //Given
+        UserRegisterRequestDto request = createUserRequest();
+        request.setEmail("@example.com");
+        int expected = 400;
+
+        //When
+        String jsonRequest = objectMapper.writeValueAsString(request);
+        MvcResult result = mockMvc.perform(
+                post("/auth/register")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        //Then
+        int actual = result.getResponse().getStatus();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Register user with invalid username, should return 400 status")
+    void registerUser_WithInvalidUsername_ShouldReturnBadRequestStatus() throws Exception {
+        //Given
+        UserRegisterRequestDto request = createUserRequest();
+        request.setUsername("_1231invalid");
+        int expected = 400;
+
+        //When
+        String jsonRequest = objectMapper.writeValueAsString(request);
+        MvcResult result = mockMvc.perform(
+                post("/auth/register")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        //Then
+        int actual = result.getResponse().getStatus();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Register user with invalid password should return 400 status")
+    void registerUser_WithInvalidPassword_ShouldReturnBadRequestStatus() throws Exception {
+        //Given
+        UserRegisterRequestDto request = createUserRequest();
+        request.setPassword("123456789");
+        request.setRepeatPassword("123456789");
+        int expected = 400;
+
+        //When
+        String jsonRequest = objectMapper.writeValueAsString(request);
+        MvcResult result = mockMvc.perform(
+                post("/auth/register")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        //Then
+        int actual = result.getResponse().getStatus();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    @DisplayName("Register user with non match passwords m should return 400 status")
+    void registerUser_WithNoneMatchPasswords_ShouldReturnBadRequestStatus() throws Exception {
+        //Given
+        UserRegisterRequestDto request = createUserRequest();
+        request.setPassword("User=123456789");
+        request.setRepeatPassword("User=1234567899");
+        int expected = 400;
+
+        //When
+        String jsonRequest = objectMapper.writeValueAsString(request);
+        MvcResult result = mockMvc.perform(
+                        post("/auth/register")
+                                .content(jsonRequest)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        //Then
+        int actual = result.getResponse().getStatus();
+        assertEquals(expected, actual);
+    }
+
     private UserRegisterRequestDto createUserRequest() {
         UserRegisterRequestDto user = new UserRegisterRequestDto();
         user.setEmail("register@example.com");

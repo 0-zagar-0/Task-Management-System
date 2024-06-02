@@ -146,7 +146,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Update role with user without role ADMIN, should return 403 status")
     @WithMockUser(username = "user2", roles = "USER")
-    void updateRole_WithUserWithoutRoleAdmin_() throws Exception {
+    void updateRole_WithUserWithoutRoleAdmin_ShouldReturnForbiddenStatus() throws Exception {
         //Given
         int expected = 403;
         Long id = 4L;

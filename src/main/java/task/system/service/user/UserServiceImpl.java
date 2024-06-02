@@ -87,11 +87,11 @@ public class UserServiceImpl implements UserService {
         }
 
         user.getRoles().add(role);
-        userRepository.updateRoleById(id, role.getName());
+        User updatedUser = userRepository.updateRoleById(id, role.getName());
         LOGGER.info("User with email: {} updated role to: {}",
                 user.getEmail(), role.getName().name()
         );
-        return userMapper.toDto(user);
+        return userMapper.toDto(updatedUser);
     }
 
     @Override
