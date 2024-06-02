@@ -27,6 +27,11 @@
         <jjwt.version>0.11.5</jjwt.version>
         <springdoc.openapi.common.version>1.6.15</springdoc.openapi.common.version>
         <telegrambots.version>6.8.0</telegrambots.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
+        <dropbox.version>7.0.0</dropbox.version>
+        <hibernate.version>6.2.7.Final</hibernate.version>
+        <gorm-hibernate5.version>8.1.0</gorm-hibernate5.version>
+        <maven.checkstyle.version>3.3.0</maven.checkstyle.version>
     </properties>
 
     <dependencies>
@@ -62,6 +67,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jdbc</artifactId>
             <exclusions>
@@ -89,12 +99,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>6.2.7.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.grails</groupId>
             <artifactId>gorm-hibernate5-spring-boot</artifactId>
-            <version>8.1.0</version>
+            <version>${gorm-hibernate5.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -146,14 +156,31 @@
         <dependency>
             <groupId>com.dropbox.core</groupId>
             <artifactId>dropbox-core-sdk</artifactId>
-            <version>7.0.0</version>
+            <version>${dropbox.version}</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots-spring-boot-starter</artifactId>
             <version>${telegrambots.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${testcontainers.version}</version>
+        </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
@@ -199,7 +226,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven.checkstyle.version}</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
