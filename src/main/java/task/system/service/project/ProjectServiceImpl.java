@@ -107,17 +107,19 @@ public class ProjectServiceImpl implements ProjectService {
                     project.getUsers().addAll(usersFromDbFromRequest);
                 });
         Optional.ofNullable(request.getUsers())
-                .ifPresent(users -> project.getUsers().addAll(getUsersFromDbFromRequest(users)));
+                .ifPresent(users -> {
+                    Set<User> usersFromDbFromRequest = getUsersFromDbFromRequest(users);
+                    project.getUsers().addAll(usersFromDbFromRequest);
+                });
 
         Project projectFromDb = findProjectById(id);
         Project updatedProject = projectRepository.update(project);
-
+        ProjectDetailsResponseDto responseDto = projectMapper.toDto(updatedProject);
         createAndSendMessageToTelegramNewUser(projectFromDb, updatedProject);
         String updateMessage = "The details of the project have been updated"
                 + System.lineSeparator() + "Project: " + project.getName();
         taskSystemBot.sendMessage(updateMessage, projectFromDb.getUsers());
-
-        return projectMapper.toDto(updatedProject);
+        return responseDto;
     }
 
     @Override

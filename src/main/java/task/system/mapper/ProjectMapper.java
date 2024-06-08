@@ -24,7 +24,7 @@ public interface ProjectMapper {
     @Mapping(target = "userIds", source = "users", qualifiedByName = "setUserIds")
     @Mapping(target = "administratorIds",
             source = "administrators",
-            qualifiedByName = "setAdministratorIds")
+            qualifiedByName = "setUserIds")
     @Mapping(target = "mainUser", source = "savedProject.mainUser.id")
     ProjectDetailsResponseDto toDto(Project savedProject);
 
@@ -33,13 +33,6 @@ public interface ProjectMapper {
     @Named("setUserIds")
     default Set<Long> setUserIds(Set<User> users) {
         return users.stream()
-                .map(User::getId)
-                .collect(Collectors.toSet());
-    }
-
-    @Named("setAdministratorIds")
-    default Set<Long> setAdministratorIds(Set<User> administrators) {
-        return administrators.stream()
                 .map(User::getId)
                 .collect(Collectors.toSet());
     }

@@ -1,0 +1,1 @@
+DELETE FROM projects_administrators WHERE project_id = 2;
