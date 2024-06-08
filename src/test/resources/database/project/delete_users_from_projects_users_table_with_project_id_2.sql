@@ -1,0 +1,1 @@
+DELETE FROM projects_users WHERE project_id = 2;

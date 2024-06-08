@@ -55,7 +55,7 @@ public class ProjectController {
     @Operation(summary = "Update by id", description = "Update project by id")
     @ResponseStatus(HttpStatus.OK)
     public ProjectDetailsResponseDto updateById(
-            @PathVariable Long id, @RequestBody ProjectUpdateRequestDto request
+            @PathVariable Long id, @RequestBody @Valid ProjectUpdateRequestDto request
     ) {
         return projectService.updateById(id, request);
     }
