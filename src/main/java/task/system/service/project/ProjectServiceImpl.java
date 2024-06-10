@@ -1,5 +1,6 @@
 package task.system.service.project;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,17 +41,19 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDetailsResponseDto create(ProjectRequestDto request) {
-        Project project = projectMapper.toEntity(request);
-        Set<User> administratorsFromRequest =
-                getUsersFromDbFromRequest(request.getAdministrators());
+        getUsersFromDbFromRequest(request.getUsers());
+        getUsersFromDbFromRequest(request.getAdministrators());
+        checkValidDate(request.getStartDate(), request.getEndDate());
 
+        Project project = projectMapper.toEntity(request);
         User user = userService.getAuthenticatedUser();
         project.setMainUser(user);
 
+        Set<User> administratorsFromRequest =
+                getUsersFromDbFromRequest(request.getAdministrators());
         Set<User> administrators = project.getAdministrators();
         administrators.add(user);
         administrators.addAll(administratorsFromRequest);
-
         Set<User> usersFromRequest = getUsersFromDbFromRequest(request.getUsers());
         Set<User> users = project.getUsers();
         users.addAll(administrators);
@@ -92,10 +95,20 @@ public class ProjectServiceImpl implements ProjectService {
                 .filter(desc -> !desc.equals(project.getDescription()))
                 .ifPresent(project::setDescription);
         Optional.ofNullable(request.getStartDate())
-                .filter(startDate -> !startDate.equals(project.getStartDate()))
+                .filter(startDate -> !startDate.equals(project.getStartDate())
+                        && request.getEndDate() == null
+                        && checkValidDate(startDate, project.getEndDate())
+                )
+                .ifPresent(project::setStartDate);
+        Optional.ofNullable(request.getStartDate())
+                .filter(startDate -> !startDate.equals(project.getStartDate())
+                        && request.getEndDate() != null
+                        && checkValidDate(startDate, request.getEndDate())
+                )
                 .ifPresent(project::setStartDate);
         Optional.ofNullable(request.getEndDate())
-                .filter(endDate -> !endDate.equals(project.getEndDate()))
+                .filter(endDate -> !endDate.equals(project.getEndDate())
+                        && checkValidDate(project.getStartDate(), endDate))
                 .ifPresent(project::setEndDate);
         Optional.ofNullable(request.getStatus())
                 .filter(status -> !status.equals(project.getStatus()))
@@ -125,15 +138,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void deleteById(Long id) {
         Project project = findProjectById(id);
+        checkingUserAccess(ACCESS_USER, id, project.getUsers());
 
         if (!project.getMainUser().getId().equals(userService.getAuthenticatedUser().getId())) {
             throw new DataProcessingException(
                     "You cannot delete this project, only the main user can do that"
             );
         }
-
-        checkingUserAccess(ACCESS_USER, id, project.getUsers());
-        checkingUserAccess(ACCESS_ADMINISTRATOR, id, project.getAdministrators());
 
         String deleteMessage = "The project has been deleted" + System.lineSeparator()
                 + "Project: " + project.getName();
@@ -187,5 +198,13 @@ public class ProjectServiceImpl implements ProjectService {
                 taskSystemBot.sendMessage(telegramMessage, usersUpdatedProjects);
             }
         }
+    }
+
+    private boolean checkValidDate(LocalDate startDate, LocalDate endDate) {
+        if (endDate.isBefore(startDate) || startDate.isAfter(endDate)) {
+            throw new DataProcessingException("Date incorrect please entry valid date");
+        }
+
+        return true;
     }
 }
