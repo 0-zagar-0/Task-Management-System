@@ -57,15 +57,17 @@ public class TaskSystemBot extends TelegramLongPollingBot {
 
     public void sendMessage(String text, Long userId) {
         if (text != null && !text.isEmpty()) {
-            TaskSystemBotChat botChat = botService.findByUserId(userId);
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setChatId(botChat.getChatId());
-            sendMessage.setText(text);
+            if (botService.existsById(userId)) {
+                TaskSystemBotChat botChat = botService.findByUserId(userId);
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setChatId(botChat.getChatId());
+                sendMessage.setText(text);
 
-            try {
-                execute(sendMessage);
-            } catch (TelegramApiException e) {
-                throw new DataProcessingException("Can't send message", e);
+                try {
+                    execute(sendMessage);
+                } catch (TelegramApiException e) {
+                    throw new DataProcessingException("Can't send message", e);
+                }
             }
         }
     }

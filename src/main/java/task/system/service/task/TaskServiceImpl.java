@@ -172,9 +172,12 @@ public class TaskServiceImpl implements TaskService {
     private void checkDueDate(LocalDate dueDate, Long projectId) {
         ProjectDetailsResponseDto projectDetails = projectService.getById(projectId);
 
-        if (dueDate.isAfter(projectDetails.getEndDate())) {
+        if (dueDate.isAfter(projectDetails.getEndDate())
+                || dueDate.isBefore(projectDetails.getStartDate())
+        ) {
             throw new DataProcessingException("The date is incorrect: " + dueDate
-                    + ", you entered a date after the end date of the project: "
+                    + ", you entered a date before the start date of the project: "
+                    + projectDetails.getStartDate() + " or after the end date of the project: "
                     + projectDetails.getEndDate());
         }
     }

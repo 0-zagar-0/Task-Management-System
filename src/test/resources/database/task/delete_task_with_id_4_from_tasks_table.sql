@@ -1,0 +1,3 @@
+DELETE FROM tasks WHERE id = 4;
+
+ALTER SEQUENCE tasks_id_seq RESTART WITH 1;
