@@ -64,21 +64,16 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public LabelResponseDto getById(Long id) {
-        return labelMapper.toDto(getLabelById(id));
+        Label labelById = getLabelById(id);
+        projectService.getById(labelById.getProjectId());
+        return labelMapper.toDto(labelById);
     }
 
     @Override
     public LabelResponseDto updateById(Long id, LabelUpdateRequestDto request) {
         Label labelById = getLabelById(id);
-        List<Label> defaultLabels = labelRepository.findDefaultLabels();
-        Optional<Label> any = defaultLabels.stream()
-                .filter(label -> label.getId().equals(labelById.getId()))
-                .findAny();
-
-        if (any.isPresent()) {
-            throw new DataProcessingException("You can't update default label");
-        }
-
+        checkDefaultLabel(labelById);
+        projectService.getById(labelById.getProjectId());
         Optional.ofNullable(request.getName())
                 .filter(name -> !name.equalsIgnoreCase(labelById.getName()))
                 .ifPresent(labelById::setName);
@@ -90,8 +85,21 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public void deleteById(Long id) {
-        getLabelById(id);
+        Label labelById = getLabelById(id);
+        checkDefaultLabel(labelById);
+        projectService.getById(labelById.getProjectId());
         labelRepository.deleteById(id);
+    }
+
+    private void checkDefaultLabel(Label labelById) {
+        List<Label> defaultLabels = labelRepository.findDefaultLabels();
+        Optional<Label> any = defaultLabels.stream()
+                .filter(label -> label.getId().equals(labelById.getId()))
+                .findAny();
+
+        if (any.isPresent()) {
+            throw new DataProcessingException("You can't update or delete default label");
+        }
     }
 
     private Label getLabelById(Long id) {
