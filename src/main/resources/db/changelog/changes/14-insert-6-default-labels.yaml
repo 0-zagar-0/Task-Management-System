@@ -6,7 +6,7 @@ databaseChangeLog:
         - insert:
             tableName: labels
             columns:
-              - column: { name: "color", value: "GREY"}
+              - column: { name: "color", value: "GRAY"}
         - insert:
             tableName: labels
             columns:
