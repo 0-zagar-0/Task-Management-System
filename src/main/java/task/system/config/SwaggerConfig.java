@@ -13,7 +13,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenApi() {
         return new OpenAPI()
-                .info(new Info().title("Book Store API").version("1.0"))
+                .info(new Info().title("Task Management API").version("1.0"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()
