@@ -1,0 +1,787 @@
+{
+	"info": {
+		"_postman_id": "b4a5a93f-89f1-41e7-ac5f-1b7e0e28540a",
+		"name": "Task Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29637776"
+	},
+	"item": [
+		{
+			"name": "Authenticated",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"Sanek=123456789\",\r\n    \"repeatPassword\": \"Sanek=123456789\",\r\n    \"username\": \"user\",\r\n    \"firstName\": \"user\",\r\n    \"lastName\": \"user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usernameOrEmail\": \"admin\",\r\n    \"password\": \"Sanek=123456789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNDQ2MzYzOSwiZXhwIjoxNzE1MDY4NDM5fQ.1YVKWw560zElbJ1JIoVKe9D8kz4UDqY5y8vdKhSnNjmrhYGN_dCIeRv_fqUrPwD6",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update role by id",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/users/2/role?role=ADMIN",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"2",
+								"role"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "ADMIN"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update my profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzE0NDMyNzQ0LCJleHAiOjE3MTUwMzc1NDR9.PGQChwP29C98nz91oz1pbrPuc0nMDgkzMYyxki9rzFZnLGzxeN4her1uWbEre-7-",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": null,\r\n    \"password\": null,\r\n    \"repeatPassword\": null,\r\n    \"username\": null,\r\n    \"firstName\": \"user\",\r\n    \"lastName\": \"user\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"project\",\r\n    \"description\": \"description\",\r\n    \"users\": [1],\r\n    \"startDate\": \"2024-06-25\",\r\n    \"endDate\": \"2024-07-25\",\r\n    \"status\": \"INITIATED\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all from users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNTQyODk2NCwiZXhwIjoxNzE2MDMzNzY0fQ.cx8etygfTSC-WqHnCXl0dWGr6a-r5vJiDhgMf6_mQNEOjJ3RUPVp9NY1mxzLM6VF",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/projects",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNTQyOTM0NiwiZXhwIjoxNzE2MDM0MTQ2fQ.vBlxTICvGWVR6jQZVFae6xwag2emV4yQrEmeUjEq8F3VJSysAnw5wBeu0WKyQfI7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/projects/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"projects",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNTQyOTM0NiwiZXhwIjoxNzE2MDM0MTQ2fQ.vBlxTICvGWVR6jQZVFae6xwag2emV4yQrEmeUjEq8F3VJSysAnw5wBeu0WKyQfI7",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"updated1\",\r\n    \"description\": \"updated\",\r\n    \"users\": [2],\r\n    \"startDate\": null,\r\n    \"endDate\": null,\r\n    \"status\": \"IN_PROGRE\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/projects/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"projects",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/projects/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"projects",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNTUyNjY5MywiZXhwIjoxNzE2MTMxNDkzfQ.n-oofn3UQlOT6DcOuZGVXTC7hcglFrfzvkJASYuZdv2HjInP7Yl_EKEDp_DJJmAK",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"task\",\r\n    \"description\": \"description\",\r\n    \"priority\": \"LOW\",\r\n    \"status\": \"IN_PROGRESS\",\r\n    \"dueDate\": \"2024-07-15\",\r\n    \"projectId\": 1,\r\n    \"assigneeId\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/project/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"project",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNTUyNjY5MywiZXhwIjoxNzE2MTMxNDkzfQ.n-oofn3UQlOT6DcOuZGVXTC7hcglFrfzvkJASYuZdv2HjInP7Yl_EKEDp_DJJmAK",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTcxNTUyNjY5MywiZXhwIjoxNzE2MTMxNDkzfQ.n-oofn3UQlOT6DcOuZGVXTC7hcglFrfzvkJASYuZdv2HjInP7Yl_EKEDp_DJJmAK",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"update\",\r\n    \"description\": \"update\",\r\n    \"priority\": null,\r\n    \"status\": \"IN_PROGRESS\",\r\n    \"dueDate\": \"2024-07-15\",\r\n    \"assigneeId\": 8\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tasks/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tasks",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ1c2VyMiIsImlhdCI6MTcxNTcwMjgzMiwiZXhwIjoxNzE2MzA3NjMyfQ.HNtmfAVbE-0G86oFHrkt1mZV37AqF99j4DvsMWDtnY3k66_p5VRoD7z6t0jadev-",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"taskId\": 3,\r\n    \"text\": \"text\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all by TaskId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ1c2VyMiIsImlhdCI6MTcxNTcwMjgzMiwiZXhwIjoxNzE2MzA3NjMyfQ.HNtmfAVbE-0G86oFHrkt1mZV37AqF99j4DvsMWDtnY3k66_p5VRoD7z6t0jadev-",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/comments?taskId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"comments"
+							],
+							"query": [
+								{
+									"key": "taskId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ1c2VyMiIsImlhdCI6MTcxNTcwMjgzMiwiZXhwIjoxNzE2MzA3NjMyfQ.HNtmfAVbE-0G86oFHrkt1mZV37AqF99j4DvsMWDtnY3k66_p5VRoD7z6t0jadev-",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"update\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/comments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attachment",
+			"item": [
+				{
+					"name": "upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/attachments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"attachments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/attachments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"attachments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download all by task id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/attachments/task/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"attachments",
+								"task",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Label",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/labels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"labels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all by project id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get by id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ1c2VyNCIsImlhdCI6MTcxNjEyODE4OCwiZXhwIjoxNzE2NzMyOTg4fQ.4gmibK9NVwZf7gt7f0QHw8ytQ4wiTR9E0cr3TLQUjw3G33u5O2gthi7NV0Cq2uXp",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"update\",\r\n    \"color\": \"AAAA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/labels/10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"labels",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by id",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
